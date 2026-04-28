@@ -4,18 +4,18 @@
   background-color: rgb(13 13 13);
 }
 
-.page-logo {
+.page-nav {
   display: flex;
   justify-content: center;
-  font-weight: 900;
-  font-size: 40px;
-  color: rgb(78 168 222);
 }
 
-.page-logo-link {
+.page-logo {
   display: inline-flex;
   align-items: center;
   column-gap: 12px;
+  font-weight: 900;
+  font-size: 40px;
+  color: rgb(78 168 222);
 }
 
 .page-logo-text span {
