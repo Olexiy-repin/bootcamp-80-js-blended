@@ -2,29 +2,30 @@ import { createWeatherCardTemplate } from './render-functions';
 import { getCityCoordinates, getWeatherByCityName } from './openweathermap-api';
 import { refs } from './refs';
 
-export function onFormSubmit(event) {
-  event.preventDefault();
+export async function onFormSubmit(event) {
+  try {
+    event.preventDefault();
 
-  const cityName = event.target.elements.user_country.value.trim();
+    const cityName = event.target.elements.user_country.value.trim();
 
-  if (!cityName) {
-    return alert('Заповніть поле пошуку!');
+    if (!cityName) {
+      return alert('Заповніть поле пошуку!');
+    }
+
+    const cityCoordinatesArr = await getCityCoordinates(cityName);
+
+    if (cityCoordinatesArr.length === 0) {
+      return alert('Міста не знайдено!');
+    }
+
+    const { lat, lon } = cityCoordinatesArr[0];
+
+    const weatherInfo = await getWeatherByCityName(lat, lon);
+
+    const weatherCardTemplate = createWeatherCardTemplate(weatherInfo);
+
+    refs.weatherContainer.innerHTML = weatherCardTemplate;
+  } catch (error) {
+    console.log(error);
   }
-
-  getCityCoordinates(cityName)
-    .then(data => {
-      if (data.length === 0) {
-        return alert('Міста не знайдено!');
-      }
-
-      const { lat, lon } = data[0];
-
-      return getWeatherByCityName(lat, lon);
-    })
-    .then(data => {
-      const weatherCardTemplate = createWeatherCardTemplate(data);
-
-      refs.weatherContainer.innerHTML = weatherCardTemplate;
-    })
-    .catch(err => console.log(err));
 }
