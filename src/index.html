@@ -1,0 +1,40 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Posts</title>
+
+    <!-- Підключення стилів -->
+    <link href="../css/posts.css" rel="stylesheet" />
+
+    <!-- Підключення скриптів -->
+    <script src="../js/posts.js" type="module"></script>
+  </head>
+  <body>
+    <section class="page-section">
+      <div class="container">
+        <h2 class="page-section-title">Create a new post</h2>
+        <form class="post-form js-post-form">
+          <label class="post-form-field-label">
+            <span>Enter the post title</span>
+            <input class="post-form-field" name="post_title" type="text" />
+          </label>
+          <label class="post-form-field-label">
+            <span>Enter the post message</span>
+            <textarea class="post-form-message" name="post_body"></textarea>
+          </label>
+
+          <button class="post-form-sbmt-btn" type="submit">Create</button>
+        </form>
+      </div>
+    </section>
+    <section class="page-section">
+      <div class="container">
+        <h2 class="page-section-title">Posts</h2>
+        <ul class="posts-list js-posts-list"></ul>
+      </div>
+    </section>
+  </body>
+</html>
