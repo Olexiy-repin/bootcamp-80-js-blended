@@ -25,10 +25,11 @@ const initGalleryByRandomPhotos = async () => {
   }
 };
 
-initGalleryByRandomPhotos();
+// initGalleryByRandomPhotos();
 
 let page = 1;
 let userQuery = '';
+let galleryCardHeight = 0;
 
 const onLoadMoreBtnClick = async event => {
   try {
@@ -39,6 +40,11 @@ const onLoadMoreBtnClick = async event => {
     const galleryCardsTemplate = data.results.map(img => createGalleryCardTemplate(img)).join('');
 
     refs.galleryList.insertAdjacentHTML('beforeend', galleryCardsTemplate);
+
+    scrollBy({
+      top: galleryCardHeight * 2,
+      behavior: 'smooth',
+    });
 
     if (data.total_pages === page) {
       refs.loadMoreBtn.classList.add('is-hidden');
@@ -93,6 +99,8 @@ const onSearchFormSubmit = async event => {
     const galleryCardsTemplate = data.results.map(img => createGalleryCardTemplate(img)).join('');
 
     refs.galleryList.innerHTML = galleryCardsTemplate;
+
+    galleryCardHeight = refs.galleryList.children[0].getBoundingClientRect().height;
   } catch (err) {
     console.log(err);
   } finally {

@@ -6,7 +6,7 @@ const refs = {
   searchForm: document.querySelector('.js-search-form'),
   galleryList: document.querySelector('.js-gallery'),
   preloader: document.querySelector('.js-loader'),
-  loadMoreBtn: document.querySelector('.js-load-more-btn'),
+  galleryTargetElement: document.querySelector('.js-gallery-target-element'),
 };
 
 const initGalleryByRandomPhotos = async () => {
@@ -25,29 +25,38 @@ const initGalleryByRandomPhotos = async () => {
   }
 };
 
-initGalleryByRandomPhotos();
+// initGalleryByRandomPhotos();
+
+const observerOptions = {
+  root: null,
+  rootMargin: '0px 0px 400px 0px',
+  threshold: 1,
+};
+
+const loadMorePhotos = async entries => {
+  if (entries[0].isIntersecting) {
+    try {
+      page++;
+
+      const data = await getPhotosByQuery(userQuery, page);
+
+      const galleryCardsTemplate = data.results.map(img => createGalleryCardTemplate(img)).join('');
+
+      refs.galleryList.insertAdjacentHTML('beforeend', galleryCardsTemplate);
+
+      if (data.total_pages === page) {
+        observerInstance.unobserve(refs.galleryTargetElement);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+};
+
+const observerInstance = new IntersectionObserver(loadMorePhotos, observerOptions);
 
 let page = 1;
 let userQuery = '';
-
-const onLoadMoreBtnClick = async event => {
-  try {
-    page++;
-
-    const data = await getPhotosByQuery(userQuery, page);
-
-    const galleryCardsTemplate = data.results.map(img => createGalleryCardTemplate(img)).join('');
-
-    refs.galleryList.insertAdjacentHTML('beforeend', galleryCardsTemplate);
-
-    if (data.total_pages === page) {
-      refs.loadMoreBtn.classList.add('is-hidden');
-      refs.loadMoreBtn.removeEventListener('click', onLoadMoreBtnClick);
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
 
 const onSearchFormSubmit = async event => {
   try {
@@ -72,7 +81,7 @@ const onSearchFormSubmit = async event => {
 
     page = 1;
 
-    refs.loadMoreBtn.classList.add('is-hidden');
+    observerInstance.unobserve(refs.galleryTargetElement);
 
     const data = await getPhotosByQuery(userQuery, page);
 
@@ -86,8 +95,7 @@ const onSearchFormSubmit = async event => {
     }
 
     if (data.total_pages > 1) {
-      refs.loadMoreBtn.classList.remove('is-hidden');
-      refs.loadMoreBtn.addEventListener('click', onLoadMoreBtnClick);
+      observerInstance.observe(refs.galleryTargetElement);
     }
 
     const galleryCardsTemplate = data.results.map(img => createGalleryCardTemplate(img)).join('');
